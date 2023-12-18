@@ -1,0 +1,7 @@
+name = "elogs"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Kevin Chadwick"]
+maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
+maintainers-logins = ["kevlar700"]
