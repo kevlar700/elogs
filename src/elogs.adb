@@ -32,8 +32,8 @@ is
       Formatted_Message : in Stringle)
    is
    begin
-      -- TODO: Locking. Protected types are not desirable as they are not
-      -- compatible with every runtime or SPARKs flow analysis.
+      --  TODO: Locking. Protected types are not desirable as they are not
+      --  compatible with every runtime or SPARKs flow analysis.
       Log_Store.Log_IDs (Log_Store.Index)       := Log_ID;
       Log_Store.Messages (Log_Store.Index)      := Formatted_Message;
       Log_Store.Log_Processed (Log_Store.Index) := False;
