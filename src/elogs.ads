@@ -169,9 +169,9 @@ is
    --  Returns whether a log number has been marked as processed by the user.
 
    function Next_To_Process return Natural;
-   -- returns the Log_Index of the log that will be overwritten the soonest
-   -- and that has not been marked as processed. This function returns 0 if
-   -- all logs have been marked as processed.
+   --  returns the Log_Index of the log that will be overwritten next
+   --  and that has not been marked as processed. This function returns 0 if
+   --  all logs have been marked as processed.
 
 private
 
