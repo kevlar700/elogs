@@ -7,7 +7,7 @@ maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
 maintainers-logins = ["kevlar700"]
 [[depends-on]]
 gnatprove = "^13"
-licenses = ISC OR BSD-2-Clause
+licenses = "ISC OR BSD-2-Clause"
 website = "https://github.com/kevlar700/elogs"
 tags = ["spark", "embedded", "zfp", "logging", "log"]
 
