@@ -9,7 +9,10 @@ project Elogs is
    for Create_Missing_Dirs use "True";
    for Library_Dir use "lib";
 
-   for Library_Kind use "static";
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Type_Type :=
+     external ("ELOGS_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+   for Library_Kind use Library_Type;
 
    package Compiler is
       for Default_Switches ("Ada") use Elogs_Config.Ada_Compiler_Switches;
