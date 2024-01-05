@@ -10,7 +10,6 @@ website = "https://github.com/kevlar700/elogs"
 tags = ["spark", "embedded", "zfp", "logging", "log"]
 
 [[depends-on]]
-gnatprove = "^13"
 
 [configuration.variables]
 Max_Log_Count = {type = "Integer", default = 50}
