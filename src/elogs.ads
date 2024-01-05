@@ -110,11 +110,14 @@ is
    --  Creates a Log entry into the ring buffer (Log_Store) and sets Exceptive
    --  to True. If there is space then the message shall have Exception
    --  indication text prepended.
+   --
    --   @param Log_ID
    --  provides log tracing in any compilation mode such as when debug
    --  information is unavailable.
+   --
    --   @Param Message
    --  The fixed length string to enter into the log.
+   --
    --   @Param Exceptive
    --  indicates that an exception has occurred
    --
@@ -163,15 +166,22 @@ is
    procedure Mark_Processed (Log_Number : in Log_Index);
    --  Mark a log number as having been processed.
 
+   procedure Unmark_Processed (Log_Number : in Log_Index);
+   --  Unmark a log number as having been processed.
+
    function Processed
      (Log_Number : in Log_Index)
       return Boolean;
    --  Returns whether a log number has been marked as processed by the user.
 
+   procedure Unmark_Processed_All;
+   --  Unmarks all stored logs indicating that all logs still need to be
+   --  processed
+
    function Next_To_Process return Natural;
-   --  returns the Log_Index of the log that will be overwritten next
-   --  and that has not been marked as processed. This function returns 0 if
-   --  all logs have been marked as processed.
+   --  returns the Log_Index of the log that will be overwritten next and that
+   --  has not been marked as processed. This function returns 0 if all logs
+   --  have been marked as processed.
 
 private
 
@@ -215,17 +225,16 @@ end Elogs;
 
 --  ISC License (Simplified BSD)
 --
---  Copyright (c) 2023, Kevin Chadwick
---  Copyright (c) 2023, Elansys Limited
+--  Copyright (c) 2023, Kevin Chadwick Copyright (c) 2023, Elansys Limited
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
 --  copyright notice and this permission notice appear in all copies.
 --
---  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
---  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
---  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
---  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
---  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
---  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
---  PERFORMANCE OF THIS SOFTWARE.
+--  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+--  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+--  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+--  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+--  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+--  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+--  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

@@ -7,7 +7,8 @@ is
         GNAT.Source_Info.Compilation_ISO_Date;
       pragma Annotate
         (GNATprove, False_Positive, "length check might fail",
-         "reviewed by Kevin Chadwick; string is a static 10 characters mmmm-dd-yy");
+         "reviewed by Kevin Chadwick; string is a static 10 characters " &
+         "mmmm-dd-yy");
    begin
       return Compiled;
    end Compile_Date;
@@ -146,6 +147,18 @@ is
       Log_Store.Log_Processed (Log_Number) := True;
    end Mark_Processed;
 
+   procedure Unmark_Processed (Log_Number : in Log_Index) is
+   begin
+      Log_Store.Log_Processed (Log_Number) := False;
+   end Unmark_Processed;
+
+   procedure Unmark_Processed_All is
+   begin
+      for M in Log_Store.Log_Processed'Range loop
+         Log_Store.Log_Processed (M) := False;
+      end loop;
+   end Unmark_Processed_All;
+
    function Next_To_Process return Natural is
       Logs_Stored : constant Natural := Log_Count;
    begin
@@ -186,17 +199,16 @@ end Elogs;
 
 --  ISC License (Simplified BSD)
 --
---  Copyright (c) 2023, Kevin Chadwick
---  Copyright (c) 2023, Elansys Limited
+--  Copyright (c) 2023, Kevin Chadwick Copyright (c) 2023, Elansys Limited
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
 --  copyright notice and this permission notice appear in all copies.
 --
---  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
---  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
---  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
---  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
---  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
---  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
---  PERFORMANCE OF THIS SOFTWARE.
+--  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+--  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+--  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+--  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+--  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+--  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+--  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

@@ -57,7 +57,8 @@ is
       end if;
 
       --  fill up the log
-      for I in 1 .. Elogs.Max_Log_Count - 2 loop
+      for I in 1 .. Elogs.Max_Log_Count - 2
+      loop
          Base_Log_ID (1 .. I'Image'Length) := I'Image;
          Elogs.Log
            (Log_ID  => Base_Log_ID,
@@ -147,7 +148,7 @@ is
       if Retrieved_Log.Log_ID /= Expected then
          declare
             Output : constant String :=
-              "Log_Count should have been: " & Expected &
+              "The first log should have been: " & Expected &
               " but was actually: " & Retrieved_Log.Log_ID;
          begin
             if Print then
@@ -253,17 +254,16 @@ end Elogs_Test;
 
 --  ISC License (Simplified BSD)
 --
---  Copyright (c) 2023, Kevin Chadwick
---  Copyright (c) 2023, Elansys Limited
+--  Copyright (c) 2023, Kevin Chadwick Copyright (c) 2023, Elansys Limited
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
 --  copyright notice and this permission notice appear in all copies.
 --
---  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
---  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
---  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
---  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
---  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
---  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
---  PERFORMANCE OF THIS SOFTWARE.
+--  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+--  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+--  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+--  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+--  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+--  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+--  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
