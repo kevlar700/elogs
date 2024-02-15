@@ -41,7 +41,6 @@ abstract project Elogs_Config is
            ,"-gnatyu" -- Check unnecessary blank lines
            , "-gnatyx" -- Check extra parentheses
            , "-gnatyM100" -- Check line length is less than 100
-           , "-gnat2022" -- Enable Ada 2022 support
           );
 
    Max_Log_Count_First := "-9223372036854775808";
