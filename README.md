@@ -1,4 +1,4 @@
-# elogs
+# elogs [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/elogs.json)](https://alire.ada.dev/crates/elogs.html)
 Embedded logging absent of runtime errors
 
 A logging package primarily developed for embedded use, including systems   
