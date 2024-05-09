@@ -16,3 +16,6 @@ Max_Log_Count = {type = "Integer", default = 50}
 Max_Message_Length = {type = "Integer", default = 200}
 Device_ID_Length = {type = "Integer", default = 12}
 Version_Length = {type = "Integer", default = 8}
+
+[build-switches]
+"*".ada_version = "Ada2022"
