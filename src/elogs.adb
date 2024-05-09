@@ -68,17 +68,22 @@ is
       Exceptive :    out Exception_T)
    is
    begin
-      if Message'Length <= (Max_Message_Length - Exceptive_Prepend'Length) then
-         Log
-           (Log_ID  => Log_ID,
-            Message => Exceptive_Prepend & Message);
-      else
-         Log
-           (Log_ID  => Log_ID,
-            Message => Message);
-      end if;
+      Log
+        (Log_ID  => Log_ID,
+         Message => Exceptive_Prepend & Message);
 
       Exceptive := True;
+   end Status_Exception;
+
+   procedure Status_Exception
+     (Log_ID  : in Log_ID_Type;
+      Message : in String)
+   is
+   begin
+      Log
+        (Log_ID  => Log_ID,
+         Message => Exceptive_Prepend & Message);
+
    end Status_Exception;
 
    procedure Increment_Index (Index : in out Log_Index) is

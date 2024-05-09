@@ -108,8 +108,7 @@ is
       Exceptive :    out Exception_T) with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
    --  Creates a Log entry into the ring buffer (Log_Store) and sets Exceptive
-   --  to True. If there is space then the message shall have Exception
-   --  indication text prepended.
+   --  to True. The message shall have Exceptive_Prepend prepended.
    --
    --   @param Log_ID
    --  provides log tracing in any compilation mode such as when debug
@@ -123,7 +122,7 @@ is
    --
    --
    --  Example use
-   --   Job (Exceptive : out Boolean)
+   --   Job (Exceptive : out Exception_T)
    --   is
    --   begin
    --    Elogs.Status_Exception
@@ -144,6 +143,15 @@ is
    --  example would be timeouts that should never occur. However I would
    --  exclude logical timeouts that are expected to occur that depend upon
    --  conditions such as contention.
+
+   procedure Status_Exception
+     (Log_ID  : in Log_ID_Type;
+      Message : in String) with
+     Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
+   -- The same as Status_Exception above except that this procedure does not
+   -- require an Exceptive boolean
+   --   The purpose being that whilst an exception should generally be handled as a non code flow error
+   --   Handling that as a combined yet clear status code perhaps as an predicated enum in the package(s) may be preferred.
 
    function Log_Count return Natural;
    --  Indicates the numbers of Logs stored.
