@@ -1,6 +1,6 @@
 name = "elogs"
 description = "Embedded logging, proven absent of runtime errors"
-version = "1.1.0"
+version = "1.2.0"
 
 authors = ["Kevin Chadwick"]
 maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
