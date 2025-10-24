@@ -7,12 +7,6 @@ is
 
    SW_Version : constant String := "00.01.00";
 
-   Device_ID : constant Readable_ID :=
-     (Wafer_Coordinate_X => 16#FFFF#,
-      Wafer_Coordinate_Y => 16#E1E1#,
-      Wafer_Number       => 177,
-      Lot_Number         => "1234567");
-
    Log_Overflow : constant String (1 .. Elogs.Max_Message_Length + 11) :=
      [others => 'X'];
 
@@ -21,8 +15,32 @@ is
       Exceptive  :    out Elogs.Exception_T)
       return Boolean
    is
+      type Readable_ID is record
+         Wafer_Coordinate_X : Unsigned_16     := 0;
+         Wafer_Coordinate_Y : Unsigned_16     := 0;
+         Wafer_Number       : Unsigned_8      := 0;
+         Lot_Number         : String (1 .. 7) := [others => ' '];
+      end record with
+        Object_Size => 96, Size => 96, Bit_Order => System.Low_Order_First,
+        Universal_Aliasing => True;
+        --  Universal_Aliasing removes the warning "unchecked conversion
+        --  implemented by copy"
+
+      for Readable_ID use record
+         Wafer_Coordinate_X at 0 range  0 .. 15;
+         Wafer_Coordinate_Y at 0 range 16 .. 31;
+         Wafer_Number       at 0 range 32 .. 39;
+         Lot_Number         at 0 range 40 .. 95;
+      end record;
+
       function To_Bytes is new Ada.Unchecked_Conversion
         (Readable_ID, Elogs.Device_ID_Bytes);
+
+      Device_ID : constant Readable_ID :=
+        (Wafer_Coordinate_X => 16#FFFF#,
+         Wafer_Coordinate_Y => 16#E1E1#,
+         Wafer_Number       => 177,
+         Lot_Number         => "1234567");
 
       First_Log_ID     : constant String   := "08A567C391E17867";
       All_Tests_Passed : Boolean           := True;
@@ -51,14 +69,12 @@ is
       if not Log_Count
           (Print    => Print,
            Log      => Log,
-           Expected => 2)
-      then
+           Expected => 2) then
          All_Tests_Passed := False;
       end if;
 
       --  fill up the log
-      for I in 1 .. Elogs.Max_Log_Count - 2
-      loop
+      for I in 1 .. Elogs.Max_Log_Count - 2 loop
          Base_Log_ID (1 .. I'Image'Length) := I'Image;
          Elogs.Log
            (Log_ID  => Base_Log_ID,
@@ -68,23 +84,20 @@ is
       if not Log_Count
           (Print    => Print,
            Log      => Log,
-           Expected => Elogs.Max_Log_Count)
-      then
+           Expected => Elogs.Max_Log_Count) then
          All_Tests_Passed := False;
       end if;
 
       if not First_Intact
           (Print    => Print,
            Log      => Log,
-           Expected => First_Log_ID)
-      then
+           Expected => First_Log_ID) then
          All_Tests_Passed := False;
       end if;
 
       if not Seconds_Is_Exception
           (Print => Print,
-           Log   => Log)
-      then
+           Log   => Log) then
          All_Tests_Passed := False;
       end if;
 
@@ -93,8 +106,7 @@ is
       --  beginning of the Log_Store.
       if not Round_Robin_Latest
           (Print => Print,
-           Log   => Log)
-      then
+           Log   => Log) then
          All_Tests_Passed := False;
       end if;
 

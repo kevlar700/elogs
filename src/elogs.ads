@@ -83,12 +83,7 @@ is
 
    procedure Initialise
      (Software_Version : in Version_String;
-      Device_ID        : in Device_ID_Bytes) with
-     Global => (Input => GNAT.Source_Info.Source_Code_Information,
-       Output => State), Depends => (State =>
-         (Software_Version,
-          Device_ID,
-          GNAT.Source_Info.Source_Code_Information)), Inline;
+      Device_ID        : in Device_ID_Bytes) with Inline;
          --  Set the logs Version number and Compilation Date. This procedure
          --  can also be used to reset the Log_Store.
          --
@@ -210,8 +205,7 @@ private
    Log_Store : Stored with
      Part_Of => State;
 
-   function Compile_Date return ISO_Date_String with
-     Volatile_Function;
+   function Compile_Date return ISO_Date_String;
 
    procedure Increment_Index (Index : in out Log_Index) with
      Inline;

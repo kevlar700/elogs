@@ -5,10 +5,6 @@ is
    function Compile_Date return ISO_Date_String is
       Compiled : constant ISO_Date_String :=
         GNAT.Source_Info.Compilation_ISO_Date;
-      pragma Annotate
-        (GNATprove, False_Positive, "length check might fail",
-         "reviewed by Kevin Chadwick; string is a static 10 characters " &
-         "mmmm-dd-yy");
    begin
       return Compiled;
    end Compile_Date;
