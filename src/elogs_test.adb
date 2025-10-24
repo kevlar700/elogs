@@ -11,8 +11,8 @@ is
      [others => 'X'];
 
    function Run_Tests
-     (Print, Log : in     Boolean := True;
-      Exceptive  :    out Elogs.Exception_T)
+     (Print, Log :     Boolean := True;
+      Exceptive  : out Elogs.Exception_T)
       return Boolean
    is
       type Readable_ID is record
@@ -59,17 +59,17 @@ is
          Message   => "Second is an exception",
          Exceptive => Exceptive);
       --  Normally we would address the exception but not for this testing.
-      pragma Warnings (Off, "if statement has no effect");
-      if Exceptive then
+      if Exceptive
+      then
          null;
       end if;
-      pragma Warnings (On, "if statement has no effect");
 
       --  Check that the log count does now equal two entries
       if not Log_Count
           (Print    => Print,
            Log      => Log,
-           Expected => 2) then
+           Expected => 2)
+      then
          All_Tests_Passed := False;
       end if;
 
@@ -84,20 +84,23 @@ is
       if not Log_Count
           (Print    => Print,
            Log      => Log,
-           Expected => Elogs.Max_Log_Count) then
+           Expected => Elogs.Max_Log_Count)
+      then
          All_Tests_Passed := False;
       end if;
 
       if not First_Intact
           (Print    => Print,
            Log      => Log,
-           Expected => First_Log_ID) then
+           Expected => First_Log_ID)
+      then
          All_Tests_Passed := False;
       end if;
 
       if not Seconds_Is_Exception
           (Print => Print,
-           Log   => Log) then
+           Log   => Log)
+      then
          All_Tests_Passed := False;
       end if;
 
@@ -106,7 +109,8 @@ is
       --  beginning of the Log_Store.
       if not Round_Robin_Latest
           (Print => Print,
-           Log   => Log) then
+           Log   => Log)
+      then
          All_Tests_Passed := False;
       end if;
 
@@ -117,24 +121,27 @@ is
    end Run_Tests;
 
    function Log_Count
-     (Print, Log : in Boolean;
-      Expected   : in Natural)
+     (Print, Log : Boolean;
+      Expected   : Natural)
       return Boolean
    is
       Reported : Natural;
    begin
       Reported := Elogs.Log_Count;
-      if Reported /= Expected then
+      if Reported /= Expected
+      then
          declare
             Output : constant String :=
               "Log_Count should have been: " & Expected'Image & " but was " &
               "actually: " & Reported'Image;
          begin
-            if Print then
+            if Print
+            then
                GNAT.IO.Put_Line (Output);
             end if;
 
-            if Log then
+            if Log
+            then
                Elogs.Log
                  (Log_ID  => "113D6461562322AB",
                   Message => Output);
@@ -143,31 +150,35 @@ is
          return False;
       end if;
 
-      if Print then
+      if Print
+      then
          GNAT.IO.Put_Line ("Log_Count test successful");
       end if;
       return True;
    end Log_Count;
 
    function First_Intact
-     (Print, Log : in Boolean;
-      Expected   : in String)
+     (Print, Log : Boolean;
+      Expected   : String)
       return Boolean
    is
       Retrieved_Log : Elogs.Retrieved_Log;
    begin
       Retrieved_Log := Elogs.Retrieve_Log (1);
-      if Retrieved_Log.Log_ID /= Expected then
+      if Retrieved_Log.Log_ID /= Expected
+      then
          declare
             Output : constant String :=
               "The first log should have been: " & Expected &
               " but was actually: " & Retrieved_Log.Log_ID;
          begin
-            if Print then
+            if Print
+            then
                GNAT.IO.Put_Line (Output);
             end if;
 
-            if Log then
+            if Log
+            then
                Elogs.Log
                  (Log_ID  => "7C033A6A8BA3CC0F",
                   Message => Output);
@@ -176,14 +187,15 @@ is
          return False;
       end if;
 
-      if Print then
+      if Print
+      then
          GNAT.IO.Put_Line ("First_Intact test successful");
       end if;
       return True;
    end First_Intact;
 
    function Seconds_Is_Exception
-     (Print, Log : in Boolean)
+     (Print, Log : Boolean)
       return Boolean
    is
       Retrieved_Log : constant Elogs.Retrieved_Log := Elogs.Retrieve_Log (2);
@@ -192,17 +204,20 @@ is
           (Elogs.Stringle'First ..
                (Elogs.Stringle'First + (Elogs.Exceptive_Prepend'Length - 1)));
    begin
-      if Found /= Elogs.Exceptive_Prepend then
+      if Found /= Elogs.Exceptive_Prepend
+      then
          declare
             Output : constant String :=
               "Seconds_Is_Exception: Expected to find: " &
               Elogs.Exceptive_Prepend & " but actually found: " & Found;
          begin
-            if Print then
+            if Print
+            then
                GNAT.IO.Put_Line (Output);
             end if;
 
-            if Log then
+            if Log
+            then
                Elogs.Log
                  (Log_ID  => "4A9EBB6F71627A6C",
                   Message => Output);
@@ -211,7 +226,8 @@ is
          return False;
       end if;
 
-      if Print then
+      if Print
+      then
          GNAT.IO.Put_Line ("Seconds_Is_Exception test successful");
       end if;
       return True;
@@ -219,7 +235,7 @@ is
    end Seconds_Is_Exception;
 
    function Round_Robin_Latest
-     (Print, Log : in Boolean)
+     (Print, Log : Boolean)
       return Boolean
    is
       Round_Robin_Msg : constant String     := "Round robin log";
@@ -236,8 +252,10 @@ is
       Compare       := Elogs.Latest_Message (1 .. Compare'Length);
       Compare2      := Retrieved_Log.Message (1 .. Compare'Length);
 
-      if Compare = Round_Robin_Msg and then Compare = Compare2 then
-         if Print then
+      if Compare = Round_Robin_Msg and then Compare = Compare2
+      then
+         if Print
+         then
             GNAT.IO.Put_Line ("Round_Robin_Latest test successful");
          end if;
          return True;
@@ -248,11 +266,13 @@ is
            "Round_Robin_Latest test failed: Expected: """ & Round_Robin_Msg &
            """ Latest : """ & Compare & """ First: """ & Compare2 & """";
       begin
-         if Print then
+         if Print
+         then
             GNAT.IO.Put_Line (Output);
          end if;
 
-         if Log then
+         if Log
+         then
             Elogs.Log
               (Log_ID  => "7A9D8275C823AE37",
                Message => Output);

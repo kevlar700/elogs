@@ -15,7 +15,8 @@ project Elogs is
    for Library_Kind use Library_Type;
 
    package Compiler is
-      for Default_Switches ("Ada") use Elogs_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use Elogs_Config.Ada_Compiler_Switches
+        & ("-gnat2022");
    end Compiler;
 
    package Binder is
@@ -27,7 +28,16 @@ project Elogs is
    end Install;
 
    package Pretty_Printer is
-      for Default_Switches ("ada") use ("--call-threshold=1", "--par-threshold=1", "--vertical-enum-types", "--vertical-named-aggregates", "-W8", "-c4", "-c5");
+      for Default_Switches ("ada") use ("--eol=unix",
+                                        "--call-threshold=1",
+                                        "--par-threshold=1",
+                                        "--vertical-enum-types",
+                                        "--vertical-named-aggregates",
+                                        "-W8",
+                                        "-c5",
+                                        "-c4",
+                                        "--separate-loop-then",
+                                        "--separate-then");
    end Pretty_Printer;
 
 end Elogs;

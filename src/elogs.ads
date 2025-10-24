@@ -55,15 +55,15 @@ is
 
    type Log_Index is range 1 .. Max_Log_Count with
      Default_Value => 1;
-   --  Log_Index, the number of logs that will be stored
+     --  Log_Index, the number of logs that will be stored
 
    type Log_Msg_Array is array (Log_Index) of Stringle;
    type Log_ID_Array is array (Log_Index) of Log_ID_Type;
    type Log_Processed_Array is array (Log_Index) of Boolean with
      Pack;
-   --  Records whether each log has been processed, resetting to false when
-   --  a log is overwritten. Useful for opportunistically sending logs to a
-   --  server or filesystem.
+     --  Records whether each log has been processed, resetting to false when
+     --  a log is overwritten. Useful for opportunistically sending logs to a
+     --  server or filesystem.
 
    type Stored is private;
 
@@ -82,25 +82,26 @@ is
    end record;
 
    procedure Initialise
-     (Software_Version : in Version_String;
-      Device_ID        : in Device_ID_Bytes) with Inline;
-         --  Set the logs Version number and Compilation Date. This procedure
-         --  can also be used to reset the Log_Store.
-         --
-         --  Initialise (Software_Version => "00.01.00",
-         --              Device_ID        => "
+     (Software_Version : Version_String;
+      Device_ID        : Device_ID_Bytes) with
+     Inline;
+   --  Set the logs Version number and Compilation Date. This procedure can
+   --  also be used to reset the Log_Store.
+   --
+   --  Initialise (Software_Version => "00.01.00",
+   --              Device_ID        => "
 
    procedure Log
-     (Log_ID  : in Log_ID_Type;
-      Message : in String) with
+     (Log_ID  : Log_ID_Type;
+      Message : String) with
      Pre => Message'Length < Max_Message_Length;
    --  Logs a message along with tracing information.
 
    Exceptive_Prepend : constant String := "Exception: ";
    procedure Status_Exception
-     (Log_ID    : in     Log_ID_Type;
-      Message   : in     String;
-      Exceptive :    out Exception_T) with
+     (Log_ID    :     Log_ID_Type;
+      Message   :     String;
+      Exceptive : out Exception_T) with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
    --  Creates a Log entry into the ring buffer (Log_Store) and sets Exceptive
    --  to True. The message shall have Exceptive_Prepend prepended.
@@ -140,13 +141,15 @@ is
    --  conditions such as contention.
 
    procedure Status_Exception
-     (Log_ID  : in Log_ID_Type;
-      Message : in String) with
+     (Log_ID  : Log_ID_Type;
+      Message : String) with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
-   -- The same as Status_Exception above except that this procedure does not
-   -- require an Exceptive boolean
-   --   The purpose being that whilst an exception should generally be handled as a non code flow error
-   --   Handling that as a combined yet clear status code perhaps as an predicated enum in the package(s) may be preferred.
+   --  The same as Status_Exception above except that this procedure does not
+   --  require an Exceptive boolean
+   --
+   --  The purpose being that whilst an exception should generally be handled
+   --  as a non code flow error Handling that as a combined yet clear status
+   --  code perhaps as an predicated enum in the package(s) may be preferred.
 
    function Log_Count return Natural;
    --  Indicates the numbers of Logs stored.
@@ -156,7 +159,7 @@ is
    --  Device_ID;
 
    function Retrieve_Log
-     (Log_Number : in Log_Index)
+     (Log_Number : Log_Index)
       return Retrieved_Log;
    --  Retrieves a log entry to faciliate e.g. log transmissions See Log_Count
    --  to get how many logs are retrievable
@@ -166,14 +169,14 @@ is
 
    function Latest_Message return Stringle;
 
-   procedure Mark_Processed (Log_Number : in Log_Index);
+   procedure Mark_Processed (Log_Number : Log_Index);
    --  Mark a log number as having been processed.
 
-   procedure Unmark_Processed (Log_Number : in Log_Index);
+   procedure Unmark_Processed (Log_Number : Log_Index);
    --  Unmark a log number as having been processed.
 
    function Processed
-     (Log_Number : in Log_Index)
+     (Log_Number : Log_Index)
       return Boolean;
    --  Returns whether a log number has been marked as processed by the user.
 
@@ -211,15 +214,15 @@ private
      Inline;
 
    function Last_Used_Index
-     (Index : in Log_Index)
+     (Index : Log_Index)
       return Log_Index;
 
    procedure Increment_Count (Count : in out Natural) with
      Inline;
 
    procedure Update_Log
-     (Log_ID            : in Log_ID_Type;
-      Formatted_Message : in Stringle) with
+     (Log_ID            : Log_ID_Type;
+      Formatted_Message : Stringle) with
      Global => (In_Out => Log_Store);
    --  Adds a new log in round robin fashion to the Log_Store.
 

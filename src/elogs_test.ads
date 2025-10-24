@@ -7,27 +7,27 @@ package Elogs_Test with
 is
 
    function Run_Tests
-     (Print, Log : in     Boolean := True;
-      Exceptive  :    out Elogs.Exception_T)
+     (Print, Log :     Boolean := True;
+      Exceptive  : out Elogs.Exception_T)
       return Boolean;
 
    function Log_Count
-     (Print, Log : in Boolean;
-      Expected   : in Natural)
+     (Print, Log : Boolean;
+      Expected   : Natural)
       return Boolean;
 
 private
    function First_Intact
-     (Print, Log : in Boolean;
-      Expected   : in String)
+     (Print, Log : Boolean;
+      Expected   : String)
       return Boolean;
 
    function Seconds_Is_Exception
-     (Print, Log : in Boolean)
+     (Print, Log : Boolean)
       return Boolean;
 
    function Round_Robin_Latest
-     (Print, Log : in Boolean)
+     (Print, Log : Boolean)
       return Boolean;
      --  Check that the store loops around successfully and then that
      --  Latest_Message returns the most recently stored log. Note that

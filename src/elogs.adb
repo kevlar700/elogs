@@ -10,8 +10,8 @@ is
    end Compile_Date;
 
    procedure Initialise
-     (Software_Version : in Version_String;
-      Device_ID        : in Device_ID_Bytes)
+     (Software_Version : Version_String;
+      Device_ID        : Device_ID_Bytes)
    is
    begin
       Log_Store.Compilation_Date := Compile_Date;
@@ -25,8 +25,8 @@ is
    end Initialise;
 
    procedure Update_Log
-     (Log_ID            : in Log_ID_Type;
-      Formatted_Message : in Stringle)
+     (Log_ID            : Log_ID_Type;
+      Formatted_Message : Stringle)
    is
    begin
       --  TODO: Locking. Protected types are not desirable as they are not
@@ -39,14 +39,15 @@ is
    end Update_Log;
 
    procedure Log
-     (Log_ID  : in Log_ID_Type;
-      Message : in String)
+     (Log_ID  : Log_ID_Type;
+      Message : String)
    is
       Formatted_Message : Stringle := [others => Ada.Characters.Latin_1.Space];
    begin
 
       for F in Message'Range loop
-         if F < Formatted_Message'Last then
+         if F < Formatted_Message'Last
+         then
             Formatted_Message (F) := Message (F);
          else
             exit;
@@ -59,9 +60,9 @@ is
    end Log;
 
    procedure Status_Exception
-     (Log_ID    : in     Log_ID_Type;
-      Message   : in     String;
-      Exceptive :    out Exception_T)
+     (Log_ID    :     Log_ID_Type;
+      Message   :     String;
+      Exceptive : out Exception_T)
    is
    begin
       Log
@@ -72,8 +73,8 @@ is
    end Status_Exception;
 
    procedure Status_Exception
-     (Log_ID  : in Log_ID_Type;
-      Message : in String)
+     (Log_ID  : Log_ID_Type;
+      Message : String)
    is
    begin
       Log
@@ -84,7 +85,8 @@ is
 
    procedure Increment_Index (Index : in out Log_Index) is
    begin
-      if Index = Log_Index'Last then
+      if Index = Log_Index'Last
+      then
          Index := Log_Index'First;
       else
          Index := Index + 1;
@@ -92,11 +94,12 @@ is
    end Increment_Index;
 
    function Last_Used_Index
-     (Index : in Log_Index)
+     (Index : Log_Index)
       return Log_Index
    is
    begin
-      if Index = Log_Index'First then
+      if Index = Log_Index'First
+      then
          return Log_Index'Last;
       else
          return Index - 1;
@@ -105,7 +108,8 @@ is
 
    procedure Increment_Count (Count : in out Natural) is
    begin
-      if Count < Max_Log_Count then
+      if Count < Max_Log_Count
+      then
          Count := Count + 1;
       end if;
    end Increment_Count;
@@ -125,7 +129,7 @@ is
    end Retrieve_Log_Info;
 
    function Retrieve_Log
-     (Log_Number : in Log_Index)
+     (Log_Number : Log_Index)
       return Retrieved_Log
    is
       Retrieved : Retrieved_Log;
@@ -136,19 +140,19 @@ is
    end Retrieve_Log;
 
    function Processed
-     (Log_Number : in Log_Index)
+     (Log_Number : Log_Index)
       return Boolean
    is
    begin
       return Log_Store.Log_Processed (Log_Number);
    end Processed;
 
-   procedure Mark_Processed (Log_Number : in Log_Index) is
+   procedure Mark_Processed (Log_Number : Log_Index) is
    begin
       Log_Store.Log_Processed (Log_Number) := True;
    end Mark_Processed;
 
-   procedure Unmark_Processed (Log_Number : in Log_Index) is
+   procedure Unmark_Processed (Log_Number : Log_Index) is
    begin
       Log_Store.Log_Processed (Log_Number) := False;
    end Unmark_Processed;
@@ -163,22 +167,26 @@ is
    function Next_To_Process return Natural is
       Logs_Stored : constant Natural := Log_Count;
    begin
-      if Logs_Stored > 0 and then Logs_Stored < Natural (Log_Index'Last) then
+      if Logs_Stored > 0 and then Logs_Stored < Natural (Log_Index'Last)
+      then
          for F in Log_Index'First .. Log_Index (Logs_Stored) loop
-            if not Processed (F) then
+            if not Processed (F)
+            then
                return Natural (F);
             end if;
          end loop;
       end if;
 
       for F in Log_Store.Index .. Log_Index'Last loop
-         if not Processed (F) then
+         if not Processed (F)
+         then
             return Natural (F);
          end if;
       end loop;
 
       for F in Log_Index'First .. Log_Store.Index loop
-         if not Processed (F) then
+         if not Processed (F)
+         then
             return Natural (F);
          end if;
       end loop;
