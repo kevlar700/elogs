@@ -1,4 +1,7 @@
 [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/elogs.json)](https://alire.ada.dev/crates/elogs.html)
+
+[![Awarded](https://img.shields.io/badge/SPARK_Crate_of_the_Year-2024-green?style=flat-square)](https://blog.adacore.com/ada-spark-crate-of-the-year-2024-winners-announced) 
+
 # elogs 
 Embedded logging absent of runtime errors
 
