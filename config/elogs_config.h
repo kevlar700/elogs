@@ -2,14 +2,14 @@
 #ifndef ELOGS_CONFIG_H
 #define ELOGS_CONFIG_H
 
-#define CRATE_VERSION "1.0.0"
+#define CRATE_VERSION "1.2.1"
 #define CRATE_NAME "elogs"
 
 #define ALIRE_HOST_OS "linux"
 
 #define ALIRE_HOST_ARCH "x86_64"
 
-#define ALIRE_HOST_DISTRO "ubuntu"
+#define ALIRE_HOST_DISTRO "debian"
 
 #define MAX_LOG_COUNT_FIRST -9223372036854775808
 #define MAX_LOG_COUNT_LAST 9223372036854775807

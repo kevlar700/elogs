@@ -5,14 +5,14 @@ pragma Style_Checks (Off);
 package Elogs_Config is
    pragma Pure;
 
-   Crate_Version : constant String := "1.0.0";
+   Crate_Version : constant String := "1.2.1";
    Crate_Name : constant String := "elogs";
 
    Alire_Host_OS : constant String := "linux";
 
    Alire_Host_Arch : constant String := "x86_64";
 
-   Alire_Host_Distro : constant String := "ubuntu";
+   Alire_Host_Distro : constant String := "debian";
 
    Max_Log_Count_First : constant := -9223372036854775808;
    Max_Log_Count_Last : constant :=  9223372036854775807;
