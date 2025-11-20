@@ -83,6 +83,44 @@ is
 
    end Status_Exception;
 
+   procedure Customised_Log
+     (Log_ID  : Log_ID_Type;
+      Message : String)
+   is
+   begin
+      Customised_Logger (Log_ID & ": " & Message);
+      Log
+        (Log_ID  => Log_ID,
+         Message => Message);
+
+   end Customised_Log;
+
+   procedure Customised_Status_Exception
+     (Log_ID  : Log_ID_Type;
+      Message : String)
+   is
+   begin
+      Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
+      Status_Exception
+        (Log_ID  => Log_ID,
+         Message => Message);
+
+   end Customised_Status_Exception;
+
+   procedure Customised_Status_Exception_Flag
+     (Log_ID    :     Log_ID_Type;
+      Message   :     String;
+      Exceptive : out Exception_T)
+   is
+   begin
+      Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
+      Status_Exception
+        (Log_ID    => Log_ID,
+         Message   => Message,
+         Exceptive => Exceptive);
+
+   end Customised_Status_Exception_Flag;
+
    procedure Increment_Index (Index : in out Log_Index) is
    begin
       if Index = Log_Index'Last
@@ -206,9 +244,9 @@ is
 
 end Elogs;
 
---  ISC License (Simplified BSD)
+--  BSD License
 --
---  Copyright (c) 2023, Kevin Chadwick Copyright (c) 2023, Elansys Limited
+--  Copyright (c) 2023, Kevin Chadwick <kc-open_source@elansys.co>
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
