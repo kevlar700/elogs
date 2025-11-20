@@ -37,9 +37,9 @@ private
 
 end Elogs_Test;
 
---  ISC License (Simplified BSD)
+--  BSD License
 --
---  Copyright (c) 2023, Kevin Chadwick Copyright (c) 2023, Elansys Limited
+--  Copyright (c) 2025, Kevin Chadwick <kc-open_source@elansys.co>
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
