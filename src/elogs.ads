@@ -29,6 +29,7 @@ is
    Max_Message_Length : constant Positive := Elogs_Config.Max_Message_Length;
    Device_ID_Length   : constant Positive := Elogs_Config.Device_ID_Length;
    Version_Length     : constant Positive := Elogs_Config.Version_Length;
+   Log_ID_Length      : constant Positive := Elogs_Config.Log_ID_Length;
 
    --  Indicates an exceptional situation has occurred.
    --
@@ -49,9 +50,12 @@ is
    Empty_Version   : constant Version_String  :=
      [others => Ada.Characters.Latin_1.Space];
 
-   --  The Log_ID is a 64bit random hex UUID log identifier that can be easily
-   --  copied and searched for within source code.
-   subtype Log_ID_Type is String (1 .. 16);
+   --  The Log_ID is a random log identifier that can be easily copied and
+   --  searched for within source code. It defaults to 16 characters to
+   --  accomodate a 64 bit hex string but a better setting might be a 45 bit 7
+   --  character Z85 encoded random string. It can however be anything you like
+   --  such as an incremental number or a structured string.
+   subtype Log_ID_Type is String (1 .. Log_ID_Length);
 
    --  Log_Index, the number of logs that will be stored
    type Log_Index is range 1 .. Max_Log_Count with
@@ -153,8 +157,8 @@ is
       Message : String) with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
 
-   --  Provide a nicer facility than composition via a child package for
-   --  adding custom logging.
+   --  Provide a nicer facility than composition via a child package for adding
+   --  custom logging.
    --   @Example
    --   procedure Log is new Customised_Log (GNAT.IO.Put_Line);
    generic

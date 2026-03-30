@@ -6,7 +6,7 @@ package Elogs_Config is
    pragma Pure;
 
    Crate_Version : constant String := "1.2.1";
-   Crate_Name : constant String := "elogs";
+   Crate_Name    : constant String := "elogs";
 
    Alire_Host_OS : constant String := "linux";
 
@@ -14,23 +14,30 @@ package Elogs_Config is
 
    Alire_Host_Distro : constant String := "debian";
 
-   Max_Log_Count_First : constant := -9223372036854775808;
-   Max_Log_Count_Last : constant :=  9223372036854775807;
-   Max_Log_Count : constant :=  50;
+   Max_Log_Count_First : constant := -9_223_372_036_854_775_808;
+   Max_Log_Count_Last  : constant := 9_223_372_036_854_775_807;
+   Max_Log_Count       : constant := 50;
 
-   type Build_Profile_Kind is (release, validation, development);
+   type Build_Profile_Kind is
+     (release,
+      validation,
+      development);
    Build_Profile : constant Build_Profile_Kind := development;
 
-   Version_Length_First : constant := -9223372036854775808;
-   Version_Length_Last : constant :=  9223372036854775807;
-   Version_Length : constant :=  8;
+   Version_Length_First : constant := -9_223_372_036_854_775_808;
+   Version_Length_Last  : constant := 9_223_372_036_854_775_807;
+   Version_Length       : constant := 8;
 
-   Device_ID_Length_First : constant := -9223372036854775808;
-   Device_ID_Length_Last : constant :=  9223372036854775807;
-   Device_ID_Length : constant :=  12;
+   Device_ID_Length_First : constant := -9_223_372_036_854_775_808;
+   Device_ID_Length_Last  : constant := 9_223_372_036_854_775_807;
+   Device_ID_Length       : constant := 12;
 
-   Max_Message_Length_First : constant := -9223372036854775808;
-   Max_Message_Length_Last : constant :=  9223372036854775807;
-   Max_Message_Length : constant :=  200;
+   Max_Message_Length_First : constant := -9_223_372_036_854_775_808;
+   Max_Message_Length_Last  : constant := 9_223_372_036_854_775_807;
+   Max_Message_Length       : constant := 200;
+
+   Log_ID_Length_First : constant := -9_223_372_036_854_775_808;
+   Log_ID_Length_Last : constant := 9_223_372_036_854_775_807;
+   Log_ID_Length       : constant := 16;
 
 end Elogs_Config;
