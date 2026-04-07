@@ -1,0 +1,40 @@
+with "config/elogs_test_config.gpr";
+project Elogs_Test is
+
+   for Source_Dirs use ("src/", "config/");
+   for Object_Dir use "obj/" & Elogs_Test_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+   for Main use ("elogs_test_run.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use Elogs_Test_Config.Ada_Compiler_Switches;
+      for Local_Configuration_Pragmas use "../gnat.adc";
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+   package Pretty_Printer is
+      for Default_Switches ("ada") use ("--eol=unix",
+                                        "--call-threshold=1",
+                                        "--par-threshold=1",
+                                        "--no-compact",
+                                        "--vertical-enum-types",
+                                        "--vertical-named-aggregates",
+                                        "--vertical-array-Types",
+                                        "--vertical-case-Alternatves",
+                                        "--comments-fill",
+                                        "--comments-special",
+                                        -- "--wide-character-encoding=8",
+                                        "--separate-loop-then",
+                                        "--separate-then",
+                                        "--jobs=1");
+   end Pretty_Printer;
+
+end Elogs_Test;
