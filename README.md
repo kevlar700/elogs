@@ -11,8 +11,15 @@ without exception propagation. Validated to SPARKs Silver level and so is
 proven absent of runtime errors.   
 
 The Log_Store memory occupation is configurable via alire configration   
-variables Max_Log_Count * Max_Message_Length (bytes).   
+Max_Log_Count and Max_Message_Length (Bytes) as well as Log_ID_Length (Bytes).   
 
+The size of Log_ID_Length is also configurable by entering the following into   
+the alire.toml of any crate that depends on elogs.   
+
+```
+[configuration.values]
+elogs.Log_ID_Length = 7
+```
 Although a managed or ragged array or container may provide more efficient   
 use of memory. Utilising a fixed length String store results in simplifying   
 the use of SPARK.   
