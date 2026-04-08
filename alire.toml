@@ -1,6 +1,6 @@
 name = "elogs"
 description = "Embedded logging, proven absent of runtime errors"
-version = "1.3.3"
+version = "1.3.4"
 
 authors = ["Kevin Chadwick"]
 maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
@@ -20,7 +20,7 @@ Max_Message_Length = {type = "Integer", default = 200}
 Device_ID_Length = {type = "Integer", default = 12}
 Version_Length = {type = "Integer", default = 8}
 # Default of 16 for elogs version compatibility (hex/64bits) but a much shorter Z85 length of e.g. 7 (45 bits) is now suggested
-Log_ID_Length = {type = "Integer", default = 16}
+Log_ID_Length = {type = "Integer", default = 7}
 
 # switch modifications apply to this crate only
 # categories covered currently include optimization, debug_info, contracts, compile_checks, runtime_checks, style_checks, ada_version, source_encoding

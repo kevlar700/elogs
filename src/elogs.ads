@@ -51,10 +51,12 @@ is
      [others => Ada.Characters.Latin_1.Space];
 
    --  The Log_ID is a random log identifier for each log entry that can be
-   --  easily copied and searched for within source code. It defaults to 16
-   --  characters to accomodate a 64 bit hex string but a better setting might
-   --  be a 45 bit 7 character Z85 encoded random string. It can however be
-   --  anything you like such as an incremental number or a structured string.
+   --  easily copied and searched for within source code. It defaults to a 45
+   --  bit 7 character Z85 encoded random string that should be optimal for all
+   --  light runtime use cases. It can however be configured for anything you
+   --  like such as an incremental number or a structured string of any length.
+   --  (see the README for a source of a Z85 encoder or the safe Z85 alphabet
+   --  that is suggested).
    subtype Log_ID_Type is String (1 .. Log_ID_Length);
 
    --  Log_Index, the number of logs that will be stored
