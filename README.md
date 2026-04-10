@@ -18,8 +18,9 @@ the alire.toml of any crate that depends on elogs.
 
 ```
 [configuration.values]
-elogs.Log_ID_Length = 7
+elogs.Log_ID_Length = 16
 ```
+
 Although a managed or ragged array or container may provide more efficient   
 use of memory. Utilising a fixed length String store results in simplifying   
 the use of SPARK.   
@@ -32,4 +33,28 @@ use. Very few changes were required such as re-ordering a calculation to avoid
 any chance of overflow. This has convinced me that the use of SPARK is a far  
 less daunting prospect than I had expected and a tool that can be used generally   
 upto silver level with less commitment than I had realised, enabled by Adas   
-excellent type system.
+excellent type system.   
+   
+
+#### A note on the new shorter default length of Log_ID
+
+Z85 is designed to maximise character usage whilst being safely used in source  
+code. You can maximise the entropy density of the log ID text string by   
+utilising the Z85 alphabet randomly or a Z85 encoder upon random bytes such as   
+is available from the following URL if it isn't already a crate. Compared to Hex,  
+Z85 provides 45 bits of entropy vs 28.
+
+https://github.com/jhumphry/Ada_BinToAsc
+
+```
+   Z85_Alphabet : constant BToA.Alphabet_85 :=
+     "0123456789" &
+     "abcdefghij" &
+     "klmnopqrst" &
+     "uvwxyzABCD" &
+     "EFGHIJKLMN" &
+     "OPQRSTUVWX" &
+     "YZ.-:+=^!/" &
+     "*?&<>()[]{" &
+     "}@%$#";
+```
