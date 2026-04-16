@@ -1,5 +1,5 @@
-package body Elogs with
-  SPARK_Mode, Refined_State => (State => Log_Store)
+package body Elogs
+  with SPARK_Mode, Refined_State => (State => Log_Store)
 is
 
    function Compile_Date return ISO_Date_String is
@@ -10,134 +10,94 @@ is
    end Compile_Date;
 
    procedure Initialise
-     (Software_Version : Version_String;
-      Device_ID        : Device_ID_Bytes)
-   is
+     (Software_Version : Version_String; Device_ID : Device_ID_Bytes) is
    begin
       Log_Store.Compilation_Date := Compile_Date;
       Log_Store.Software_Version := Software_Version;
-      Log_Store.Device_ID        := Device_ID;
-      Log_Store.Index            := 1;
-      Log_Store.Log_Count        := 0;
-      Log_Store.Log_IDs          := [others => Empty_Log_ID];
-      Log_Store.Log_Processed    := [others => False];
-      Log_Store.Messages         := [others => Empty_Stringle];
+      Log_Store.Device_ID := Device_ID;
+      Log_Store.Index := 1;
+      Log_Store.Log_Count := 0;
+      Log_Store.Log_IDs := [others => Empty_Log_ID];
+      Log_Store.Log_Processed := [others => False];
+      Log_Store.Messages := [others => Empty_Stringle];
    end Initialise;
 
-   procedure Update_Log
-     (Log_ID            : Log_ID_Type;
-      Formatted_Message : Stringle)
-   is
+   procedure Update_Log (Log_ID : Log_ID_Type; Formatted_Message : Stringle) is
    begin
       --  TODO: Locking. Protected types are not desirable as they are not
       --  compatible with every runtime or SPARKs flow analysis.
-      Log_Store.Log_IDs (Log_Store.Index)       := Log_ID;
-      Log_Store.Messages (Log_Store.Index)      := Formatted_Message;
+      Log_Store.Log_IDs (Log_Store.Index) := Log_ID;
+      Log_Store.Messages (Log_Store.Index) := Formatted_Message;
       Log_Store.Log_Processed (Log_Store.Index) := False;
       Increment_Index (Log_Store.Index);
       Increment_Count (Log_Store.Log_Count);
    end Update_Log;
 
-   procedure Log
-     (Log_ID  : Log_ID_Type;
-      Message : String)
-   is
+   procedure Log (Log_ID : Log_ID_Type; Message : String) is
       Formatted_Message : Stringle := [others => Ada.Characters.Latin_1.Space];
    begin
 
       for F in Message'Range loop
-         if F < Formatted_Message'Last
-         then
+         if F < Formatted_Message'Last then
             Formatted_Message (F) := Message (F);
          else
             exit;
          end if;
       end loop;
 
-      Update_Log
-        (Log_ID            => Log_ID,
-         Formatted_Message => Formatted_Message);
+      Update_Log (Log_ID => Log_ID, Formatted_Message => Formatted_Message);
    end Log;
 
    procedure Status_Exception
-     (Log_ID    :     Log_ID_Type;
-      Message   :     String;
-      Exceptive : out Exception_T)
-   is
+     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T) is
    begin
-      Log
-        (Log_ID  => Log_ID,
-         Message => Exceptive_Prepend & Message);
+      Log (Log_ID => Log_ID, Message => Exceptive_Prepend & Message);
 
       Exceptive := True;
    end Status_Exception;
 
-   procedure Status_Exception
-     (Log_ID  : Log_ID_Type;
-      Message : String)
-   is
+   procedure Status_Exception (Log_ID : Log_ID_Type; Message : String) is
    begin
-      Log
-        (Log_ID  => Log_ID,
-         Message => Exceptive_Prepend & Message);
+      Log (Log_ID => Log_ID, Message => Exceptive_Prepend & Message);
 
    end Status_Exception;
 
-   procedure Customised_Log
-     (Log_ID  : Log_ID_Type;
-      Message : String)
-   is
+   procedure Customised_Log (Log_ID : Log_ID_Type; Message : String) is
    begin
       Customised_Logger (Log_ID & ": " & Message);
-      Log
-        (Log_ID  => Log_ID,
-         Message => Message);
+      Log (Log_ID => Log_ID, Message => Message);
 
    end Customised_Log;
 
    procedure Customised_Status_Exception
-     (Log_ID  : Log_ID_Type;
-      Message : String)
-   is
+     (Log_ID : Log_ID_Type; Message : String) is
    begin
       Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
-      Status_Exception
-        (Log_ID  => Log_ID,
-         Message => Message);
+      Status_Exception (Log_ID => Log_ID, Message => Message);
 
    end Customised_Status_Exception;
 
    procedure Customised_Status_Exception_Flag
-     (Log_ID    :     Log_ID_Type;
-      Message   :     String;
-      Exceptive : out Exception_T)
-   is
+     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T) is
    begin
       Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
       Status_Exception
-        (Log_ID    => Log_ID,
-         Message   => Message,
-         Exceptive => Exceptive);
+        (Log_ID => Log_ID, Message => Message, Exceptive => Exceptive);
 
    end Customised_Status_Exception_Flag;
 
    procedure Increment_Index (Index : in out Log_Index) is
    begin
-      if Index = Log_Index'Last
-      then
+      if Index = Log_Index'Last then
          Index := Log_Index'First;
       else
          Index := Index + 1;
       end if;
    end Increment_Index;
 
-   function Last_Used_Index
-     (Index : Log_Index)
-      return Log_Index
-   is
+   function Last_Used_Index (Index : Log_Index) return Log_Index is
    begin
-      if Index = Log_Index'First
-      then
+      if Index = Log_Index'First then
          return Log_Index'Last;
       else
          return Index - 1;
@@ -146,8 +106,7 @@ is
 
    procedure Increment_Count (Count : in out Natural) is
    begin
-      if Count < Max_Log_Count
-      then
+      if Count < Max_Log_Count then
          Count := Count + 1;
       end if;
    end Increment_Count;
@@ -162,25 +121,19 @@ is
    begin
       Retrieved.Compilation_Date := Log_Store.Compilation_Date;
       Retrieved.Software_Version := Log_Store.Software_Version;
-      Retrieved.Device_ID        := Log_Store.Device_ID;
+      Retrieved.Device_ID := Log_Store.Device_ID;
       return Retrieved;
    end Retrieve_Log_Info;
 
-   function Retrieve_Log
-     (Log_Number : Log_Index)
-      return Retrieved_Log
-   is
+   function Retrieve_Log (Log_Number : Log_Index) return Retrieved_Log is
       Retrieved : Retrieved_Log;
    begin
-      Retrieved.Log_ID  := Log_Store.Log_IDs (Log_Number);
+      Retrieved.Log_ID := Log_Store.Log_IDs (Log_Number);
       Retrieved.Message := Log_Store.Messages (Log_Number);
       return Retrieved;
    end Retrieve_Log;
 
-   function Processed
-     (Log_Number : Log_Index)
-      return Boolean
-   is
+   function Processed (Log_Number : Log_Index) return Boolean is
    begin
       return Log_Store.Log_Processed (Log_Number);
    end Processed;
@@ -205,26 +158,22 @@ is
    function Next_To_Process return Natural is
       Logs_Stored : constant Natural := Log_Count;
    begin
-      if Logs_Stored > 0 and then Logs_Stored < Natural (Log_Index'Last)
-      then
+      if Logs_Stored > 0 and then Logs_Stored < Natural (Log_Index'Last) then
          for F in Log_Index'First .. Log_Index (Logs_Stored) loop
-            if not Processed (F)
-            then
+            if not Processed (F) then
                return Natural (F);
             end if;
          end loop;
       end if;
 
       for F in Log_Store.Index .. Log_Index'Last loop
-         if not Processed (F)
-         then
+         if not Processed (F) then
             return Natural (F);
          end if;
       end loop;
 
       for F in Log_Index'First .. Log_Store.Index loop
-         if not Processed (F)
-         then
+         if not Processed (F) then
             return Natural (F);
          end if;
       end loop;

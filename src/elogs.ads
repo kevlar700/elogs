@@ -1,5 +1,6 @@
-pragma Assertion_Policy
-  (Pre => Ignore, Post => Ignore, Contract_Cases => Ignore, Ghost => Ignore);
+pragma
+  Assertion_Policy
+    (Pre => Ignore, Post => Ignore, Contract_Cases => Ignore, Ghost => Ignore);
 --  The pre conditions in this package are intended to be verified with SPARK
 --  mode and are not meant for use at runtime.
 
@@ -8,10 +9,7 @@ with Elogs_Config;
 with GNAT.Source_Info;
 with Interfaces; use Interfaces;
 
---  @summary
---  Embedded Logging
-
---  @description
+--  Embedded Logging:
 --  A logging package primarily developed for embedded use, including systems
 --  without exception propagation. Validated to SPARKs Silver level and
 --  so is proven absent of runtime errors. The Log_Store memory occupation
@@ -20,10 +18,8 @@ with Interfaces; use Interfaces;
 --  provide more efficient use of memory. Utilising a fixed length String
 --  store results in simplifying the use of SPARK.
 
-package Elogs with
-  SPARK_Mode  => On,
-  Abstract_State => State,
-  Initializes => State
+package Elogs
+  with SPARK_Mode => On, Abstract_State => State, Initializes => State
 is
    Max_Log_Count      : constant Positive := Elogs_Config.Max_Log_Count;
    Max_Message_Length : constant Positive := Elogs_Config.Max_Message_Length;
@@ -44,10 +40,10 @@ is
    subtype Stringle is String (1 .. Max_Message_Length);
    type Device_ID_Bytes is array (1 .. Device_ID_Length) of Unsigned_8;
    subtype Version_String is String (1 .. Version_Length);
-   Empty_Stringle  : constant Stringle        :=
+   Empty_Stringle  : constant Stringle :=
      [others => Ada.Characters.Latin_1.Space];
    Empty_Device_ID : constant Device_ID_Bytes := [others => 0];
-   Empty_Version   : constant Version_String  :=
+   Empty_Version   : constant Version_String :=
      [others => Ada.Characters.Latin_1.Space];
 
    --  The Log_ID is a random log identifier for each log entry that can be
@@ -55,13 +51,27 @@ is
    --  bit 7 character Z85 encoded random string that should be optimal for all
    --  light runtime use cases. It can however be configured for anything you
    --  like such as an incremental number or a structured string of any length.
-   --  (see the README for a source of a Z85 encoder or the safe Z85 alphabet
-   --  that is suggested).
+   --
+   --   A Z85 encoder can be found at: https://github.com/jhumphry/Ada_BinToAsc
+   --
+   --  It utilises the following character set chosen to be maximal but safe
+   --  for use in source code and terminals.
+   --
+   --     Z85_Alphabet : constant BToA.Alphabet_85 :=
+   --       "0123456789" &
+   --       "abcdefghij" &
+   --       "klmnopqrst" &
+   --       "uvwxyzABCD" &
+   --       "EFGHIJKLMN" &
+   --       "OPQRSTUVWX" &
+   --       "YZ.-:+=^!/" &
+   --       "*?&<>()[]{" &
+   --       "}@%$#";
+   --
    subtype Log_ID_Type is String (1 .. Log_ID_Length);
 
    --  Log_Index, the number of logs that will be stored
-   type Log_Index is range 1 .. Max_Log_Count with
-     Default_Value => 1;
+   type Log_Index is range 1 .. Max_Log_Count with Default_Value => 1;
 
    type Log_Msg_Array is array (Log_Index) of Stringle;
    type Log_ID_Array is array (Log_Index) of Log_ID_Type;
@@ -69,8 +79,7 @@ is
    --  Records whether each log has been processed, resetting to false when
    --  a log is overwritten. Useful for opportunistically sending logs to a
    --  server or filesystem.
-   type Log_Processed_Array is array (Log_Index) of Boolean with
-     Pack;
+   type Log_Processed_Array is array (Log_Index) of Boolean with Pack;
 
    type Stored is private;
 
@@ -78,7 +87,7 @@ is
 
    type Log_Info is record
       Compilation_Date : ISO_Date_String := "yyyy-mm-dd";
-      Software_Version : Version_String  := Empty_Version;
+      Software_Version : Version_String := Empty_Version;
       Device_ID        : Device_ID_Bytes := Empty_Device_ID;
    end record;
 
@@ -94,15 +103,12 @@ is
    --  Initialise (Software_Version => "00.01.00",
    --              Device_ID        => "
    procedure Initialise
-     (Software_Version : Version_String;
-      Device_ID        : Device_ID_Bytes) with
-     Inline;
+     (Software_Version : Version_String; Device_ID : Device_ID_Bytes)
+   with Inline;
 
    --  Logs a message along with tracing information.
-   procedure Log
-     (Log_ID  : Log_ID_Type;
-      Message : String) with
-     Pre => Message'Length < Max_Message_Length;
+   procedure Log (Log_ID : Log_ID_Type; Message : String)
+   with Pre => Message'Length < Max_Message_Length;
 
    Exceptive_Prepend : constant String := "Exception: ";
 
@@ -113,10 +119,10 @@ is
    --  provides log tracing in any compilation mode such as when debug
    --  information is unavailable.
    --
-   --   @Param Message
+   --   @param Message
    --  The fixed length string to enter into the log.
    --
-   --   @Param Exceptive
+   --   @param Exceptive
    --  indicates that an exception has occurred
    --
    --
@@ -125,7 +131,7 @@ is
    --   is
    --   begin
    --    Elogs.Status_Exception
-   --     (Log_ID    => "0E8B6E4104989186",
+   --     (Log_ID    => "mKY-nHo",
    --      Message   => "Output String is of an incorrect length"
    --      Exceptive => Exceptive);
    --   end Job;
@@ -143,9 +149,8 @@ is
    --  exclude logical timeouts that are expected to occur that depend upon
    --  conditions such as contention.
    procedure Status_Exception
-     (Log_ID    :     Log_ID_Type;
-      Message   :     String;
-      Exceptive : out Exception_T) with
+     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T)
+   with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
 
    --  The same as Status_Exception above except that this procedure does not
@@ -154,9 +159,8 @@ is
    --  The purpose being that whilst an exception should generally be handled
    --  as a non code flow error. Handling that as a combined yet clear status
    --  code perhaps as a predicated enum in the package(s) may be preferred.
-   procedure Status_Exception
-     (Log_ID  : Log_ID_Type;
-      Message : String) with
+   procedure Status_Exception (Log_ID : Log_ID_Type; Message : String)
+   with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
 
    --  Provide a nicer facility than composition via a child package for adding
@@ -165,24 +169,21 @@ is
    --   procedure Log is new Customised_Log (GNAT.IO.Put_Line);
    generic
       with procedure Customised_Logger (Message : String);
-   procedure Customised_Log
-     (Log_ID  : Log_ID_Type;
-      Message : String) with
-     Pre => Message'Length < Max_Message_Length;
+   procedure Customised_Log (Log_ID : Log_ID_Type; Message : String)
+   with Pre => Message'Length < Max_Message_Length;
 
    generic
       with procedure Customised_Excepter (Message : String);
    procedure Customised_Status_Exception
-     (Log_ID  : Log_ID_Type;
-      Message : String) with
+     (Log_ID : Log_ID_Type; Message : String)
+   with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
 
    generic
       with procedure Customised_Excepter (Message : String);
    procedure Customised_Status_Exception_Flag
-     (Log_ID    :     Log_ID_Type;
-      Message   :     String;
-      Exceptive : out Exception_T) with
+     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T)
+   with
      Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
 
    --  Indicates the numbers of Logs stored.
@@ -194,9 +195,7 @@ is
 
    --  Retrieves a log entry to faciliate e.g. log transmissions See Log_Count
    --  to get how many logs are retrievable
-   function Retrieve_Log
-     (Log_Number : Log_Index)
-      return Retrieved_Log;
+   function Retrieve_Log (Log_Number : Log_Index) return Retrieved_Log;
 
    --  Returns a record containing the latest message and it's Log_ID
    function Latest_Log return Retrieved_Log;
@@ -210,9 +209,7 @@ is
    procedure Unmark_Processed (Log_Number : Log_Index);
 
    --  Returns whether a log number has been marked as processed by the user.
-   function Processed
-     (Log_Number : Log_Index)
-      return Boolean;
+   function Processed (Log_Number : Log_Index) return Boolean;
 
    --  Unmarks all stored logs indicating that all logs still need to be
    --  processed
@@ -226,40 +223,36 @@ is
 private
 
    type Stored is record
-      Compilation_Date : ISO_Date_String     := "yyyy-mm-dd";
-      Software_Version : Version_String      := Empty_Version;
-      Device_ID        : Device_ID_Bytes     := Empty_Device_ID;
-      Index            : Log_Index           := 1;
-      Log_Count        : Natural             := 0;
-      Log_IDs          : Log_ID_Array        := [others => Empty_Log_ID];
+      Compilation_Date : ISO_Date_String := "yyyy-mm-dd";
+      Software_Version : Version_String := Empty_Version;
+      Device_ID        : Device_ID_Bytes := Empty_Device_ID;
+      Index            : Log_Index := 1;
+      Log_Count        : Natural := 0;
+      Log_IDs          : Log_ID_Array := [others => Empty_Log_ID];
       Log_Processed    : Log_Processed_Array := [others => False];
       --  Messages doesn't expand in Gnat studio currently. It did when it was
       --  an array of bounded strings but maybe coincidence. You can still view
       --  it by unchecking the box and adding print Log_Store.Messages.
-      Messages         : Log_Msg_Array       := [others => Empty_Stringle];
+      Messages         : Log_Msg_Array := [others => Empty_Stringle];
 
    end record;
 
-   Log_Store : Stored with
-     Part_Of => State;
+   Log_Store : Stored
+   with Part_Of => State;
 
    function Compile_Date return ISO_Date_String;
 
-   procedure Increment_Index (Index : in out Log_Index) with
-     Inline;
+   procedure Increment_Index (Index : in out Log_Index)
+   with Inline;
 
-   function Last_Used_Index
-     (Index : Log_Index)
-      return Log_Index;
+   function Last_Used_Index (Index : Log_Index) return Log_Index;
 
-   procedure Increment_Count (Count : in out Natural) with
-     Inline;
+   procedure Increment_Count (Count : in out Natural)
+   with Inline;
 
    --  Adds a new log in round robin fashion to the Log_Store.
-   procedure Update_Log
-     (Log_ID            : Log_ID_Type;
-      Formatted_Message : Stringle) with
-     Global => (In_Out => Log_Store);
+   procedure Update_Log (Log_ID : Log_ID_Type; Formatted_Message : Stringle)
+   with Global => (In_Out => Log_Store);
 
 end Elogs;
 
