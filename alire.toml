@@ -1,6 +1,6 @@
 name = "elogs"
 description = "Embedded logging, proven absent of runtime errors"
-version = "1.3.4"
+version = "2.0.0"
 
 authors = ["Kevin Chadwick"]
 maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
@@ -71,5 +71,3 @@ validation.compile_checks = ["-gnatw.c", "-gnatwf", "-gnatw.o", "-gnatwt", "-gna
 #w Wide-character codes (that is, codes greater than 255) allowed in identifiers
 
 
-[[depends-on]]
-gnatprove = "^15.1.0"

@@ -4,7 +4,6 @@ pragma
 --  The pre conditions in this package are intended to be verified with SPARK
 --  mode and are not meant for use at runtime.
 
-with Ada.Characters.Latin_1;
 with Elogs_Config;
 with GNAT.Source_Info;
 with Interfaces; use Interfaces;
@@ -40,11 +39,9 @@ is
    subtype Stringle is String (1 .. Max_Message_Length);
    type Device_ID_Bytes is array (1 .. Device_ID_Length) of Unsigned_8;
    subtype Version_String is String (1 .. Version_Length);
-   Empty_Stringle  : constant Stringle :=
-     [others => Ada.Characters.Latin_1.Space];
+   Empty_Stringle  : constant Stringle := [others => ' '];
    Empty_Device_ID : constant Device_ID_Bytes := [others => 0];
-   Empty_Version   : constant Version_String :=
-     [others => Ada.Characters.Latin_1.Space];
+   Empty_Version   : constant Version_String := [others => ' '];
 
    --  The Log_ID is a random log identifier for each log entry that can be
    --  easily copied and searched for within source code. It defaults to a 45
@@ -106,62 +103,8 @@ is
      (Software_Version : Version_String; Device_ID : Device_ID_Bytes)
    with Inline;
 
-   --  Logs a message along with tracing information.
-   procedure Log (Log_ID : Log_ID_Type; Message : String)
-   with Pre => Message'Length < Max_Message_Length;
-
-   Exceptive_Prepend : constant String := "Exception: ";
-
-   --  Creates a Log entry into the ring buffer (Log_Store) and sets Exceptive
-   --  to True. The message shall have Exceptive_Prepend prepended.
-   --
-   --   @param Log_ID
-   --  provides log tracing in any compilation mode such as when debug
-   --  information is unavailable.
-   --
-   --   @param Message
-   --  The fixed length string to enter into the log.
-   --
-   --   @param Exceptive
-   --  indicates that an exception has occurred
-   --
-   --
-   --  Example use
-   --   Job (Exceptive : out Exception_T)
-   --   is
-   --   begin
-   --    Elogs.Status_Exception
-   --     (Log_ID    => "mKY-nHo",
-   --      Message   => "Output String is of an incorrect length"
-   --      Exceptive => Exceptive);
-   --   end Job;
-   --
-   --   Job (Exceptive => Exceptive);
-   --     if Exceptive then
-   --        Carry on as best as possible and optionally log further context
-   --        or restart the machine
-   --     end if;
-   --
-   --  This is not meant for usual logical flow where an enum is often useful
-   --  but rather intended for exceptional conditions such as external errors
-   --  and programmer error in cases where footguns cannot be avoided. An
-   --  example would be timeouts that should never occur. However I would
-   --  exclude logical timeouts that are expected to occur that depend upon
-   --  conditions such as contention.
-   procedure Status_Exception
-     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T)
-   with
-     Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
-
-   --  The same as Status_Exception above except that this procedure does not
-   --  require an Exceptive boolean
-   --
-   --  The purpose being that whilst an exception should generally be handled
-   --  as a non code flow error. Handling that as a combined yet clear status
-   --  code perhaps as a predicated enum in the package(s) may be preferred.
-   procedure Status_Exception (Log_ID : Log_ID_Type; Message : String)
-   with
-     Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
+   --  Logs a message along with tracing ID.
+   procedure Log (Log_ID : Log_ID_Type; Message : String);
 
    --  Provide a nicer facility than composition via a child package for adding
    --  custom logging.
@@ -169,22 +112,7 @@ is
    --   procedure Log is new Customised_Log (GNAT.IO.Put_Line);
    generic
       with procedure Customised_Logger (Message : String);
-   procedure Customised_Log (Log_ID : Log_ID_Type; Message : String)
-   with Pre => Message'Length < Max_Message_Length;
-
-   generic
-      with procedure Customised_Excepter (Message : String);
-   procedure Customised_Status_Exception
-     (Log_ID : Log_ID_Type; Message : String)
-   with
-     Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
-
-   generic
-      with procedure Customised_Excepter (Message : String);
-   procedure Customised_Status_Exception_Flag
-     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T)
-   with
-     Pre => Message'Length < (Max_Message_Length - Exceptive_Prepend'Length);
+   procedure Customised_Log (Log_ID : Log_ID_Type; Message : String);
 
    --  Indicates the numbers of Logs stored.
    function Log_Count return Natural;

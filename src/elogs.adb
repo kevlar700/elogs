@@ -33,34 +33,52 @@ is
       Increment_Count (Log_Store.Log_Count);
    end Update_Log;
 
+   --  procedure Log (Log_ID : Log_ID_Type; Message : String) is
+   --     subtype Copy_Index is Natural range 0 .. Max_Message_Length;
+   --     Formatted_Message  : Stringle := [others => ' '];
+   --     Characters_To_Copy : Copy_Index := Max_Message_Length;
+   --  begin
+   --
+   --     if Message'Length < Characters_To_Copy then
+   --        Characters_To_Copy := Message'Length;
+   --     end if;
+   --
+   --     for F in Positive range 1 .. Characters_To_Copy loop
+   --        pragma
+   --          Loop_Invariant
+   --            (Characters_To_Copy <= Message'Length
+   --             and Characters_To_Copy = Characters_To_Copy'Loop_Entry);
+   --
+   --        Formatted_Message (F) := Message (Message'First + (F - 1));
+   --
+   --     end loop;
+   --
+   --     --  for F in Message'Range loop
+   --     --     if F < Formatted_Message'Last then
+   --     --        Formatted_Message (F) := Message (F);
+   --     --     else
+   --     --        exit;
+   --     --     end if;
+   --     --  end loop;
+   --
+   --     Update_Log (Log_ID => Log_ID,
+   --  Formatted_Message => Formatted_Message);
+   --  end Log;
+
    procedure Log (Log_ID : Log_ID_Type; Message : String) is
-      Formatted_Message : Stringle := [others => Ada.Characters.Latin_1.Space];
+      Formatted_Message : Stringle := [others => ' '];
    begin
 
-      for F in Message'Range loop
-         if F < Formatted_Message'Last then
-            Formatted_Message (F) := Message (F);
-         else
-            exit;
-         end if;
-      end loop;
+      if Message'Length <= Formatted_Message'Length then
+         Formatted_Message (Formatted_Message'First .. Message'Length) :=
+           Message;
+      else
+         Formatted_Message :=
+           Message (Message'First .. Message'First + (Max_Message_Length - 1));
+      end if;
 
       Update_Log (Log_ID => Log_ID, Formatted_Message => Formatted_Message);
    end Log;
-
-   procedure Status_Exception
-     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T) is
-   begin
-      Log (Log_ID => Log_ID, Message => Exceptive_Prepend & Message);
-
-      Exceptive := True;
-   end Status_Exception;
-
-   procedure Status_Exception (Log_ID : Log_ID_Type; Message : String) is
-   begin
-      Log (Log_ID => Log_ID, Message => Exceptive_Prepend & Message);
-
-   end Status_Exception;
 
    procedure Customised_Log (Log_ID : Log_ID_Type; Message : String) is
    begin
@@ -68,23 +86,6 @@ is
       Log (Log_ID => Log_ID, Message => Message);
 
    end Customised_Log;
-
-   procedure Customised_Status_Exception
-     (Log_ID : Log_ID_Type; Message : String) is
-   begin
-      Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
-      Status_Exception (Log_ID => Log_ID, Message => Message);
-
-   end Customised_Status_Exception;
-
-   procedure Customised_Status_Exception_Flag
-     (Log_ID : Log_ID_Type; Message : String; Exceptive : out Exception_T) is
-   begin
-      Customised_Excepter (Log_ID & ": " & Exceptive_Prepend & Message);
-      Status_Exception
-        (Log_ID => Log_ID, Message => Message, Exceptive => Exceptive);
-
-   end Customised_Status_Exception_Flag;
 
    procedure Increment_Index (Index : in out Log_Index) is
    begin
@@ -150,9 +151,7 @@ is
 
    procedure Unmark_Processed_All is
    begin
-      for M in Log_Store.Log_Processed'Range loop
-         Log_Store.Log_Processed (M) := False;
-      end loop;
+      Log_Store.Log_Processed := [others => False];
    end Unmark_Processed_All;
 
    function Next_To_Process return Natural is
@@ -160,6 +159,8 @@ is
    begin
       if Logs_Stored > 0 and then Logs_Stored < Natural (Log_Index'Last) then
          for F in Log_Index'First .. Log_Index (Logs_Stored) loop
+            pragma Loop_Invariant (F in Log_Index'Range);
+
             if not Processed (F) then
                return Natural (F);
             end if;
@@ -167,12 +168,14 @@ is
       end if;
 
       for F in Log_Store.Index .. Log_Index'Last loop
+         pragma Loop_Invariant (F in Log_Index'Range);
          if not Processed (F) then
             return Natural (F);
          end if;
       end loop;
 
       for F in Log_Index'First .. Log_Store.Index loop
+         pragma Loop_Invariant (F in Log_Index'Range);
          if not Processed (F) then
             return Natural (F);
          end if;
