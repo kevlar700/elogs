@@ -26,16 +26,6 @@ is
    Version_Length     : constant Positive := Elogs_Config.Version_Length;
    Log_ID_Length      : constant Positive := Elogs_Config.Log_ID_Length;
 
-   --  Indicates an exceptional situation has occurred.
-   --
-   --  Where code flow decisions are required then an alternative application
-   --  specific status should be provided separately. My personal preference
-   --  is enums with static predicates.
-   --
-   --  Exception_T was originally defaulted to False but setting it manually in
-   --  the happy path to False, makes SPARK happier.
-   subtype Exception_T is Boolean;
-
    subtype Stringle is String (1 .. Max_Message_Length);
    type Device_ID_Bytes is array (1 .. Device_ID_Length) of Unsigned_8;
    subtype Version_String is String (1 .. Version_Length);
@@ -94,13 +84,32 @@ is
       Message : Stringle;
    end record;
 
+   type Additional_Logger_Type is not null access procedure (Mesage : String);
+
    --  Set the logs Version number and Compilation Date. This procedure can
    --  also be used to reset the Log_Store.
    --
    --  Initialise (Software_Version => "00.01.00",
-   --              Device_ID        => "
+   --              Device_ID        => 16#00112233445566778899AABBCC#);
    procedure Initialise
      (Software_Version : Version_String; Device_ID : Device_ID_Bytes)
+   with Inline;
+
+   --  Set the logs Version number and Compilation Date. This procedure can
+   --  also be used to reset the Log_Store. This version of Initialise also
+   --  enables running an arbitrary procedure along side logging
+   --
+   --   Initialise (Software_Version  => "00.01.00",
+   --               Device_ID         => 16#00112233445566778899AABBCC#,
+   --               Additional_Logger => GNAT.IO.Put_Line);
+   --
+   --   Note: You will want to use the generic Customised_Logger below if you
+   --  wish to customise the logging process per package. The additional logger
+   --  set here will be global to the application and set at runtime.
+   procedure Initialise
+     (Software_Version  : Version_String;
+      Device_ID         : Device_ID_Bytes;
+      Additional_Logger : Additional_Logger_Type)
    with Inline;
 
    --  Logs a message along with tracing ID.
@@ -150,19 +159,23 @@ is
 
 private
 
+   procedure Additional_Logger (Message : String) is null;
+
    type Stored is record
-      Compilation_Date : ISO_Date_String := "yyyy-mm-dd";
-      Software_Version : Version_String := Empty_Version;
-      Device_ID        : Device_ID_Bytes := Empty_Device_ID;
-      Index            : Log_Index := 1;
-      Log_Count        : Natural := 0;
-      Log_IDs          : Log_ID_Array := [others => Empty_Log_ID];
-      Log_Processed    : Log_Processed_Array := [others => False];
+      Compilation_Date       : ISO_Date_String := "yyyy-mm-dd";
+      Software_Version       : Version_String := Empty_Version;
+      Device_ID              : Device_ID_Bytes := Empty_Device_ID;
+      Index                  : Log_Index := 1;
+      Log_Count              : Natural := 0;
+      Log_IDs                : Log_ID_Array := [others => Empty_Log_ID];
+      Log_Processed          : Log_Processed_Array := [others => False];
       --  Messages doesn't expand in Gnat studio currently. It did when it was
       --  an array of bounded strings but maybe coincidence. You can still view
       --  it by unchecking the box and adding print Log_Store.Messages.
-      Messages         : Log_Msg_Array := [others => Empty_Stringle];
-
+      Messages               : Log_Msg_Array := [others => Empty_Stringle];
+      Additional_Log_Enabled : Boolean := False;
+      Additional_Log_Process : Additional_Logger_Type :=
+        Additional_Logger'Access;
    end record;
 
    Log_Store : Stored
@@ -186,7 +199,7 @@ end Elogs;
 
 --  BSD License
 --
---  Copyright (c) 2025, Kevin Chadwick <kc-open_source@elansys.co>
+--  Copyright (C) 2026, Elansys <elansys-open_source@elansys.co>
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above

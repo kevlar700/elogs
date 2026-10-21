@@ -22,10 +22,23 @@ is
       Log_Store.Messages := [others => Empty_Stringle];
    end Initialise;
 
+   procedure Initialise
+     (Software_Version  : Version_String;
+      Device_ID         : Device_ID_Bytes;
+      Additional_Logger : Additional_Logger_Type) is
+   begin
+      Initialise
+        (Software_Version  => Software_Version,
+         Device_ID         => Device_ID);
+
+      Log_Store.Additional_Log_Enabled := True;
+      Log_Store.Additional_Log_Process := Additional_Logger;
+   end Initialise;
+
    procedure Update_Log (Log_ID : Log_ID_Type; Formatted_Message : Stringle) is
    begin
       --  TODO: Locking. Protected types are not desirable as they are not
-      --  compatible with every runtime or SPARKs flow analysis.
+      --  compatible with every runtime.
       Log_Store.Log_IDs (Log_Store.Index) := Log_ID;
       Log_Store.Messages (Log_Store.Index) := Formatted_Message;
       Log_Store.Log_Processed (Log_Store.Index) := False;
@@ -78,6 +91,19 @@ is
       end if;
 
       Update_Log (Log_ID => Log_ID, Formatted_Message => Formatted_Message);
+
+      --  Positive'Last should be plenty in any case. Any provided arbitrary
+      --  procedure will of course require it's own proofs
+      if Log_Store.Additional_Log_Enabled then
+         declare
+            Additonal_Max : constant Unsigned_64 :=
+              Log_ID'Length + Message'Length + 2;
+         begin
+            if Additonal_Max <= Unsigned_64 (Positive'Last) then
+               Log_Store.Additional_Log_Process (Log_ID & ": " & Message);
+            end if;
+         end;
+      end if;
    end Log;
 
    procedure Customised_Log (Log_ID : Log_ID_Type; Message : String) is
@@ -198,7 +224,7 @@ end Elogs;
 
 --  BSD License
 --
---  Copyright (c) 2023, Kevin Chadwick <kc-open_source@elansys.co>
+--  Copyright (C) 2025, Elansys <elansys-open_source@elansys.co>
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
