@@ -2,44 +2,29 @@ with Elogs;
 with Interfaces; use Interfaces;
 with System;
 
-package Elogs_Test with
-  SPARK_Mode => Off
+package Elogs_Test
+  with SPARK_Mode => Off
 is
 
-   function Run_Tests
-     (Print, Log :     Boolean := True;
-      Exceptive  : out Elogs.Exception_T)
-      return Boolean;
+   function Run_Tests return Boolean;
 
-   function Log_Count
-     (Print, Log : Boolean;
-      Expected   : Natural)
-      return Boolean;
+   function Log_Count (Expected : Natural) return Boolean;
 
 private
-   function First_Intact
-     (Print, Log : Boolean;
-      Expected   : String)
-      return Boolean;
+   function First_Intact (Expected : String) return Boolean;
 
-   function Seconds_Is_Exception
-     (Print, Log : Boolean)
-      return Boolean;
-
-   function Round_Robin_Latest
-     (Print, Log : Boolean)
-      return Boolean;
-     --  Check that the store loops around successfully and then that
-     --  Latest_Message returns the most recently stored log. Note that
-     --  this test is quite fragile as it depends on the loop and a log and
-     --  exception above and expects that the index is back to the beginning
-     --  of the Log_Store.
+   --  Check that the store loops around successfully and then that
+   --  Latest_Message returns the most recently stored log. Note that
+   --  this test is quite fragile as it depends on the loop and a log and
+   --  exception above and expects that the index is back to the beginning
+   --  of the Log_Store.
+   function Round_Robin_Latest return Boolean;
 
 end Elogs_Test;
 
 --  BSD License
 --
---  Copyright (c) 2025, Kevin Chadwick <kc-open_source@elansys.co>
+--  Copyright (C) 2026, Elansys <elansys-open_source@elansys.co>
 --
 --  Permission to use, copy, modify, and distribute this software for any
 --  purpose with or without fee is hereby granted, provided that the above
