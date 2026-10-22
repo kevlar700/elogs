@@ -3,11 +3,11 @@ description = "Embedded logging, proven absent of runtime errors"
 version = "2.0.0"
 
 authors = ["Kevin Chadwick"]
-maintainers = ["Kevin Chadwick <kc-ada@elansys.co>"]
+maintainers = ["Kevin Chadwick <elansys-open_source@elansys.co>"]
 maintainers-logins = ["kevlar700"]
 licenses = "0BSD"
-website = "https://github.com/kevlar700/elogs"
-tags = ["spark", "embedded", "zfp", "logging", "log"]
+website = "https://github.com/elansys/elogs"
+tags = ["spark", "embedded", "zfp", "light", "logging", "log"]
 
 [[depends-on]]
 gnat = "(>=13 & <2000) | ^11 | >=2020"
